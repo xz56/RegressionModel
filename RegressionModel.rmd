@@ -4,7 +4,14 @@ output:
   pdf_document: default
   html_document: default
 ---
-  
+## Executive Summary
+
+The transmission of the car certainly plays a role in the mpg of the car. A 95% T test of the transmission
+of the cars to mpg shows that they are not the same and is significantly significant. In addition, a model for
+mpg using the transmission, weight and horsepower for the dependent variables can compensate for about
+84% of the variation. It should be noted that it is an extremely small sample size and using data from 1974
+and is in no way represenative of cars of today.
+
 ## Overview
   
 The data from mtcars will be looked at and analyzed to determine the relationship between the miles per gallon and the transmission of the car.
