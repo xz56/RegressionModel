@@ -1,0 +1,73 @@
+---
+title: "mtcars Analysis"
+output:
+  pdf_document: default
+  html_document: default
+---
+  
+##Overview
+  
+The data from mtcars will be looked at and analyzed to determine the relationship between the miles per gallon and the transmission of the car.
+
+##Exploratory Analysis
+
+The data is first loaded and converted to factors
+```{r}
+library(ggplot2)
+require(gridExtra)
+data(mtcars)
+mtcars$am = as.factor(mtcars$am)
+mtcars$cyl = as.factor(mtcars$cyl)
+mtcars$gear = as.factor(mtcars$gear)
+mtcars$car = as.factor(mtcars$carb)
+mtcars$vs = as.factor(mtcars$vs)
+auto = subset(mtcars, mtcars$am == 0)
+man = subset(mtcars, mtcars$am == 1)
+```
+
+A quick plot is setup in order to see how the data is distributed amonst transmission and mpg
+```{r, echo=FALSE}
+ggplot(mtcars, aes(x=am, y=mpg)) + geom_boxplot(data=mtcars) + labs(title='Transmission vs MPG', x='Transmission(Auto=0, Man = 1)')
+```
+
+As can be seen in the figure above, manual cars appear to have a higher maximum mpg and minimum mpg. The range in mpg widely varies amongst  manual cars compared to automatic.
+
+```{r}
+t.test(man$mpg, auto$mpg)
+```
+
+In addition, as can be seen in the two item T test of both the manual and automatic transmissions, there is a 95% confidence interval of 3.21-11.28 showing that there is likely to be some difference between manual and automatic transmissions. The p value is low enough to reject the notion that there is no difference between mpg amongst transmissions and that manual is better for mpg than automatic. In addition, the difference in the means can be easily seen with manual have an average mpg of 24.39 and automatic have an anverage of 17.1
+
+##Regression modeling
+```{r}
+model1 = lm(mpg ~ ., data=mtcars)
+summary(model1)
+```
+
+A preliminary linear model on the mtcars dataset blindly checking the effect other variables would have on the mpg shows that mpg is not highly dependent on any of the independent variables. However, the coffecient of am is about 2.52023 which means that it has a greater weight in determining the mpg, as the value goes higher(car is manual).  
+
+```{r}
+data(mtcars)
+sort(cor(mtcars)[1,])
+```
+
+The correlation of the data is checked to see which variables are related to mpg. wt, cyl, disp, and hp all appear to be highly correlated to mpg. disp and cyl appear correlated to one another and would be as higher cylinders in a engine would be capable of greater displacement. wt and hp would generally be typical logical guesses to indicators of mpg.
+
+```{r}
+model2 = lm(mpg ~ am + wt + hp, data=mtcars)
+summary(model2)
+anova(model1, model2)
+```
+
+Model3 is not signficantly better than the first model however, it's variables in determining the mpg are individually much more significant to determing the mpg.
+
+```{r, echo=FALSE}
+par(mfrow = c(2,2))
+plot(model2)
+```
+
+In addition, the residuals appear normally distributed on the Q-Q graph, and there are no obvious patterns on the residuals vs fitted on the distribution of residuals. 
+
+##Summary
+
+The transmission of the car certainly plays a role in the mpg of the car. A 95% T test of the transmission of the cars to mpg shows that they are not the same and is significantly significant. In addition, a model for mpg using the transmission, weight and horsepower for the dependent variables can compensate for about 84% of the variation. It should be noted that it is an extremely small sample size and using data from 1974 and is in no way represenative of cars of today.
